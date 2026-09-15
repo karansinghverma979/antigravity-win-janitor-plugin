@@ -45,7 +45,15 @@ Your primary deterministic execution engine is located at:
 - **`janitor.ps1 trim`**: Flushes inactive process working sets via `EmptyWorkingSet` Win32 API, kills detached background ghosts (`Widgets`, `CrossDeviceResume`, `IGCCTray`), and forces garbage collection.
 - **`janitor.ps1 purge`**: Deep wipe of leftover AppData directories, orphaned caches, and installer temp files.
 - **`janitor.ps1 enforce-baseline`**: Enforces the 10 bloat services (`WSearch`, `SysMain`, `DiagTrack`, `InventorySvc`, `wuqisvc`, `whesvc`, `dptftcs`, `DPS`, `Spooler`, `TrkWks`) to `Disabled`, and verifies Edge/Widget blocking policies.
-- **`janitor.ps1 diagnose <ram|cpu|drift>`**: Deep root-cause investigation for performance anomalies.
+- **`janitor.ps1 diagnose <ram|cpu|drift|shell>`**: Deep root-cause investigation for performance anomalies, process deadlocks, and shell freezes.
+- **`janitor.ps1 fix-shell`**: Remediates virtual desktop lag, DWM compositor stalls, desktop right-click freezes, and thumbnail RPC deadlocks (`AppHangXProcB1`).
+- **`janitor.ps1 packages <audit|clean>`**: Audits Scoop/Winget updates and purges old application versions and installer caches.
+- **`janitor.ps1 path-clean`**: Deduplicates User PATH and prunes non-existent directories with automatic pre-cleanup backup.
+- **`janitor.ps1 reg-clean`**: Scans and removes residual vendor registry hives from uninstalled software with `.reg` backups.
+- **`janitor.ps1 dev-hygiene`**: Audits global Python packages vs. local venvs and verifies Rule 8 path portability.
+- **`janitor.ps1 learn`**: Scans system for unhandled background daemons, rogue startup keys, dead PATHs, or bloat services, staging them into `drift.json`.
+- **`janitor.ps1 assimilate <candidate-id|all-pending>`**: Validates safety against Sakshi Shield and assimilates candidate rules into `learned_rules.json`.
+- **`janitor.ps1 ignore <candidate-id>`**: Whitelists a candidate in `drift.json`.
 
 ---
 
@@ -62,11 +70,23 @@ Your primary deterministic execution engine is located at:
 3. **Windows Update Drift**:
    - Windows Cumulative Updates often silently restore `DiagTrack`, `WSearch`, and `SysMain`.
    - Inspect recent hotfixes with `Get-HotFix` and immediately reverse drift with `janitor.ps1 enforce-baseline`.
+4. **Virtual Desktop & Shell Freezes (`AppHangXProcB1` / Event ID 1002)**:
+   - Run `janitor.ps1 diagnose shell` to inspect explorer/DWM hangs and blocked RPC targets.
+   - Run `janitor.ps1 fix-shell` to enforce 0ms switching (`MinAnimate = 0`), terminate frozen `dllhost.exe` thumbnail servers, purge corrupted `thumbcache_*.db` / `iconcache_*.db` files, restart Explorer, and refresh DWM.
 
 ---
 
-## ⚡ 5. Execution & Output Protocols
+## 🧬 5. The Sentinel Self-Improvement Flywheel
+
+The agent continuously evolves its protection scope without manual recoding:
+1. **Sense**: Run `janitor.ps1 learn` periodically or when diagnosing anomalies to catch emerging bloat.
+2. **Stage**: Drift findings are buffered in `drift.json` outside production code.
+3. **Assimilate**: When new recurring daemons or services are validated, run `janitor.ps1 assimilate <candidate-id>`. Rules are dynamically stored in `learned_rules.json` and immediately honored across all routines (`trim`, `purge`, `enforce-baseline`).
+
+---
+
+## ⚡ 6. Execution & Output Protocols
 
 - Always present diagnostic results using clean Unicode ASCII box flowcards (`┌───┐ ──► └───┘`).
-- Execute fast, non-destructive read operations and working-set memory trims immediately without friction.
+- Execute fast, non-destructive read operations, drift scans, and working-set memory trims immediately without friction.
 - For operations requiring Administrator privilege, provide the exact 1-line command to run with `sudo` or an elevated terminal.

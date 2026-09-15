@@ -84,10 +84,70 @@ pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugi
 sudo pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" updates
 ```
 
+### 6. 📡 Drift Sensor & Continuous Learning (`learn`)
+Scans for unmapped background daemons, newly added startup registry hooks, and telemetry services installed by OS updates or new apps, staging them into `drift.json`:
+
+```powershell
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" learn
+```
+
+### 7. 🧬 Gated Rule Assimilation (`assimilate` & `ignore`)
+Assimilates candidate rules dynamically into `learned_rules.json` without touching core code, instantly extending `trim`, `purge`, and `enforce-baseline`:
+
+```powershell
+# Assimilate a specific candidate by ID
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" assimilate <candidate-id>
+
+# Or whitelist/ignore a benign candidate
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" ignore <candidate-id>
+```
+
+### 8. 📦 Package Manager Hygiene (`packages`)
+Audits and purges historical Scoop application versions and cache archives, and checks Winget upgrades:
+
+```powershell
+# Audit pending Scoop and Winget updates
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" packages audit
+
+# Clean old Scoop versions and installer caches
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" packages clean
+```
+
+### 9. 🛣️ Environment PATH Deduplication & Dead Directory Pruner (`path-clean`)
+Scans the User `PATH`, removes duplicates, prunes non-existent directories, and saves an automatic timestamped backup:
+
+```powershell
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" path-clean
+```
+
+### 10. 🧹 Residual Registry Hive Purger (`reg-clean`)
+Scans `HKCU:\Software` and `HKLM:\Software` for abandoned vendor keys of uninstalled software (`Google`, `VMware`, `Notion`, `Ollama`, etc.) with pre-deletion `.reg` export backups:
+
+```powershell
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" reg-clean
+```
+
+### 11. 🐍 Developer Environment & Python Isolation (`dev-hygiene`)
+Audits global Python packages vs. local virtual environments, inspects NPM cache sizes, and verifies Rule 8 path portability:
+
+```powershell
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" dev-hygiene
+```
+
+### 12. 🖥️ Windows Shell, DWM & UI Freeze Remediation (`fix-shell`)
+Eliminates virtual desktop switching lag (enforces 0ms switching), terminates frozen `dllhost.exe` RPC thumbnail workers (`AppHangXProcB1`), purges corrupted `thumbcache_*.db` / `iconcache_*.db` databases, restarts Explorer, and refreshes the DWM compositor:
+
+```powershell
+pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" fix-shell
+```
+
 ---
 
 ## 📖 Deep Technical References
 
+- [Windows Shell, DWM & UI Freeze Troubleshooting](./references/shell_and_ui_troubleshooting.md)
+- [Package, PATH & System Hygiene Runbook](./references/package_and_system_hygiene.md)
+- [The Sentinel Self-Improvement Flywheel](./references/self_improvement_loop.md)
 - [Windows 11 Memory Internals & Working Sets](./references/windows_internals_memory.md)
 - [Diagnostic Triage Playbooks: Why & When Issues Come](./references/diagnostic_playbooks.md)
 - [Windows Updates & Component Store Servicing](./references/update_and_servicing.md)

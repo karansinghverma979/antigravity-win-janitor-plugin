@@ -13,6 +13,8 @@ antigravity-win-janitor-plugin/
 ├── agents/
 │   └── win_janitor.md                     # Declarative Antigravity Agent definition
 ├── plugin.json                            # Antigravity Plugin manifest
+├── drift.json                             # Anomaly buffer for detected drift & candidates
+├── learned_rules.json                     # Dynamic schema-driven assimilated rules
 ├── skills/
 │   └── win-janitor/
 │       ├── SKILL.md                       # Antigravity Skill instructions & router
@@ -20,7 +22,10 @@ antigravity-win-janitor-plugin/
 │       │   └── janitor.ps1                # Pure PowerShell 7 execution engine
 │       └── references/
 │           ├── diagnostic_playbooks.md    # RAM/CPU troubleshooting playbooks
+│           ├── package_and_system_hygiene.md # Scoop/Winget, PATH & Registry runbook
 │           ├── sakshi_shield_invariant.md # Immutable sanctuary protection contract
+│           ├── self_improvement_loop.md   # Drift sensor & assimilation architecture
+│           ├── shell_and_ui_troubleshooting.md # DWM, virtual desktop & shell freeze runbook
 │           ├── update_and_servicing.md    # Component store (WinSxS) & update hygiene
 │           └── windows_internals_memory.md# Win32 working set & paging internals
 ├── .gitignore
@@ -72,10 +77,33 @@ antigravity-win-janitor-plugin/
 5. **🔍 Scenario Diagnostics (`diagnose`)**:
    - **`diagnose ram`**: Deep memory allocation inspection.
    - **`diagnose cpu`**: CPU spike root-cause analysis.
+   - **`diagnose shell`**: Windows Shell, DWM compositor, and cross-process RPC hang diagnostics (`AppHangXProcB1`).
    - **`updates`**: Analyzes recent Windows Cumulative Updates and reverses any silent telemetry service restoration.
 
-6. **🛡️ The Sanctuary Shield Invariant**:
+6. **🖥️ Windows Shell & Virtual Desktop Freeze Remediation (`fix-shell`)**:
+   - Solves virtual desktop switching latency, desktop right-click freezes, and terminal UI lockups.
+   - Enforces 0ms switching (`MinAnimate = 0`), terminates blocked `dllhost.exe` RPC thumbnail workers, purges corrupted `thumbcache_*.db` / `iconcache_*.db` databases, restarts Explorer, and refreshes the DWM compositor.
+
+7. **🛡️ The Sanctuary Shield Invariant**:
    - Immutable security contract that safeguards designated sanctuary tasks, directories, and credentials from automated termination or deletion.
+
+8. **🧬 The Sentinel Self-Improvement Flywheel**:
+   - Continuous drift sensing (`janitor.ps1 learn`) that catches newly registered telemetry daemons, services, dead PATH entries, or boot keys after Windows Updates.
+   - Dynamic schema-driven rule assimilation (`learned_rules.json`) that expands protection without editing core source code.
+
+9. **📦 Package Manager Ecosystem Governor (`packages`)**:
+   - Audits and purges Scoop historical versions (`scoop cleanup *`) and cache archives (`scoop cache rm *`).
+   - Audits Windows Package Manager for pending application upgrades (`winget upgrade`).
+
+10. **🛣️ Environment PATH Deduplication & Dead Directory Pruner (`path-clean`)**:
+    - Scans User `PATH`, removes redundant duplicates, prunes non-existent directory paths, and creates timestamped pre-cleanup backups.
+
+11. **🧹 Residual Registry Hive Purger (`reg-clean`)**:
+    - Scans and purges leftover vendor registry keys from uninstalled software (`Google`, `VMware`, `Notion`, `Ollama`, etc.) with pre-deletion `.reg` export backups.
+
+12. **🐍 Developer Environment & Python Isolation (`dev-hygiene`)**:
+    - Audits global Python pip installations to prevent dependency pollution and ensure virtual environment isolation (`uv` / `venv`).
+    - Verifies NPM cache sizes and enforces Rule 8 portable pathing standards.
 
 ---
 
@@ -100,10 +128,10 @@ All operations can be executed directly without Antigravity via PowerShell 7:
 ```powershell
 $Janitor = "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1"
 
-# 1. System Health Audit
+# 1. System Health & RAM Audit
 pwsh -NoProfile -File $Janitor audit
 
-# 2. Reclaim Process Working Sets
+# 2. Reclaim Process Working Sets (EmptyWorkingSet Win32 API)
 pwsh -NoProfile -File $Janitor trim
 
 # 3. Clean Residual Caches & Leftover Files
@@ -115,7 +143,31 @@ sudo pwsh -NoProfile -File $Janitor enforce-baseline
 # 5. Root-Cause Diagnostic Scenarios
 pwsh -NoProfile -File $Janitor diagnose ram
 pwsh -NoProfile -File $Janitor diagnose cpu
+pwsh -NoProfile -File $Janitor diagnose shell
 sudo pwsh -NoProfile -File $Janitor updates
+
+# 6. Windows Shell & Desktop Freeze Remediation
+pwsh -NoProfile -File $Janitor fix-shell
+
+# 7. Package Manager Hygiene (Scoop & Winget)
+pwsh -NoProfile -File $Janitor packages audit
+pwsh -NoProfile -File $Janitor packages clean
+
+# 8. Environment PATH Deduplication & Dead Directory Pruning
+pwsh -NoProfile -File $Janitor path-clean
+
+# 9. Residual Registry Hive Purge (Uninstalled Software Leftovers)
+pwsh -NoProfile -File $Janitor reg-clean
+
+# 10. Developer Environment & Python Dependency Hygiene
+pwsh -NoProfile -File $Janitor dev-hygiene
+
+# 11. Sense Drift & Detect New Telemetry / Bloat Daemons
+pwsh -NoProfile -File $Janitor learn
+
+# 12. Assimilate or Whitelist Candidates
+pwsh -NoProfile -File $Janitor assimilate <candidate-id>
+pwsh -NoProfile -File $Janitor ignore <candidate-id>
 ```
 
 ---

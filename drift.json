@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "description": "Staging buffer for anomalous processes, services, startup keys, and folders",
+  "lastScanned": "2026-09-16T04:06:40Z",
+  "candidates": [
+    {
+      "id": "svc-edgeupdatem",
+      "category": "Service",
+      "name": "edgeupdatem",
+      "details": "Microsoft Edge Update Service (edgeupdatem) (Stopped | Manual)",
+      "firstSeen": "2026-09-16T03:51:02Z",
+      "lastSeen": "2026-09-16T04:06:40Z",
+      "hitCount": 6,
+      "status": "assimilated",
+      "recommendedAction": "disable-service"
+    },
+    {
+      "id": "svc-edgeupdate",
+      "category": "Service",
+      "name": "edgeupdate",
+      "details": "Microsoft Edge Update Service (edgeupdate) (Stopped | Automatic)",
+      "firstSeen": "2026-09-16T03:51:02Z",
+      "lastSeen": "2026-09-16T04:06:40Z",
+      "hitCount": 6,
+      "status": "assimilated",
+      "recommendedAction": "disable-service"
+    },
+    {
+      "id": "reg-hkcu--software-google",
+      "category": "Registry",
+      "name": "HKCU:\\Software\\Google",
+      "details": "Orphaned vendor hive of uninstalled software",
+      "firstSeen": "2026-09-16T04:06:14Z",
+      "lastSeen": "2026-09-16T04:06:40Z",
+      "hitCount": 3,
+      "status": "ignored",
+      "recommendedAction": "purge-reg"
+    },
+    {
+      "id": "svc-tzautoupdate",
+      "category": "Service",
+      "name": "tzautoupdate",
+      "details": "Auto Time Zone Updater (Stopped | Manual)",
+      "firstSeen": "2026-09-16T03:51:02Z",
+      "lastSeen": "2026-09-16T04:06:40Z",
+      "hitCount": 6,
+      "status": "ignored",
+      "recommendedAction": "disable-service"
+    },
+    {
+      "id": "proc-msedgewebview2",
+      "category": "Process",
+      "name": "msedgewebview2",
+      "details": "RAM: 46.5 MB | Background daemon",
+      "firstSeen": "2026-09-16T03:51:02Z",
+      "lastSeen": "2026-09-16T04:06:40Z",
+      "hitCount": 18,
+      "status": "ignored",
+      "recommendedAction": "trim"
+    }
+  ]
+}

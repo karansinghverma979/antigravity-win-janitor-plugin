@@ -7,6 +7,8 @@ Desktop.ini
 *.log
 *.tmp
 temp/
+backups/
+*.reg
 
 # IDE & Tooling
 .vscode/

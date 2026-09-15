@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.2.0",
+  "description": "Dynamic rules assimilated autonomously or approved by user",
+  "ghostProcesses": [],
+  "ghostPaths": [],
+  "disabledServices": [
+    {
+      "name": "edgeupdate",
+      "desc": "Microsoft Edge Update Service (edgeupdate) (Stopped | Automatic)"
+    },
+    {
+      "name": "edgeupdatem",
+      "desc": "Microsoft Edge Update Service (edgeupdatem) (Stopped | Manual)"
+    }
+  ],
+  "startupRemovals": [],
+  "ghostRegKeys": []
+}
