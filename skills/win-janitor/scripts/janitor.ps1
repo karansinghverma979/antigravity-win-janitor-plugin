@@ -504,9 +504,16 @@ function Invoke-JanitorDiagnose {
             $minAnim = (Get-ItemProperty "HKCU:\Control Panel\Desktop\WindowMetrics" -Name MinAnimate -ErrorAction SilentlyContinue).MinAnimate
             $tbAnim = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarAnimations -ErrorAction SilentlyContinue).TaskbarAnimations
             $tvBtn = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton -ErrorAction SilentlyContinue).ShowTaskViewButton
+            $iconsOnly = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name IconsOnly -ErrorAction SilentlyContinue).IconsOnly
+            $prevDesk = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name DisablePreviewDesktop -ErrorAction SilentlyContinue).DisablePreviewDesktop
+            $aeroPeek = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\DWM" -Name EnableAeroPeek -ErrorAction SilentlyContinue).EnableAeroPeek
+
             Write-Host "  • Window Animation (MinAnimate)      : $minAnim"
             Write-Host "  • Taskbar Animations (TaskbarAnimations): $tbAnim $(if ($tbAnim -eq 0) {'(⚠️ Disabling breaks modern XAML Alt+Tab/Task View)'} else {'(Active)'})"
             Write-Host "  • Task View Button (ShowTaskViewButton) : $tvBtn"
+            Write-Host "  • Icons Only (IconsOnly)             : $iconsOnly $(if ($iconsOnly -eq 1) {'(⚠️ Blank Thumbnails: Always show icons is ON)'} else {'(Thumbnails Enabled)'})"
+            Write-Host "  • Desktop Preview (DisablePreviewDesktop): $prevDesk $(if ($prevDesk -eq 1) {'(⚠️ Desktop preview disabled)'} else {'(Active)'})"
+            Write-Host "  • Aero Peek (EnableAeroPeek)         : $aeroPeek $(if ($aeroPeek -eq 0) {'(⚠️ Aero Peek disabled in DWM)'} else {'(Active)'})"
         }
         default {
             Write-Host "Available diagnosis scenarios: 'ram', 'cpu', 'drift', 'shell'" -ForegroundColor DarkYellow
@@ -1104,16 +1111,22 @@ function Invoke-JanitorFixShell {
     Write-Host "         🖥️ WIN-JANITOR: SHELL, DWM & VIRTUAL DESKTOP REMEDIATION       " -ForegroundColor Cyan
     Write-Host "======================================================================" -ForegroundColor Cyan
 
-    # Step 1: Verify Task View & Shell Experience Compatibility
-    Write-Host "`n[1/5] VERIFYING TASK VIEW & SHELL COMPATIBILITY" -ForegroundColor Yellow
+    # Step 1: Verify Task View, Previews & Shell Experience Compatibility
+    Write-Host "`n[1/5] VERIFYING TASK VIEW & PREVIEW COMPATIBILITY" -ForegroundColor Yellow
     try {
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 1 -Type DWord -Force
         Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "1" -Force
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 1 -Type DWord -Force
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "IconsOnly" -Value 0 -Type DWord -Force
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "DisablePreviewDesktop" -Value 0 -Type DWord -Force
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Value 1 -Type DWord -Force
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name "VisualFXSetting" -Value 3 -Type DWord -Force
         Write-Host "  ✅ Verified TaskbarAnimations = 1 (Required for modern XAML Alt+Tab & Task View)." -ForegroundColor Green
         Write-Host "  ✅ Verified ShowTaskViewButton = 1 (Task View enabled)." -ForegroundColor Green
+        Write-Host "  ✅ Verified IconsOnly = 0 & DisablePreviewDesktop = 0 (Live desktop and window thumbnails active)." -ForegroundColor Green
+        Write-Host "  ✅ Verified EnableAeroPeek = 1 (Aero Peek and live DWM surfaces active)." -ForegroundColor Green
     } catch {
-        Write-Host "  ⚠️ Could not set animation registry values: $($_.Exception.Message)" -ForegroundColor DarkYellow
+        Write-Host "  ⚠️ Could not set preview/animation registry values: $($_.Exception.Message)" -ForegroundColor DarkYellow
     }
 
     # Step 2: Terminate Explorer, Shell Hosts & Locked COM Workers

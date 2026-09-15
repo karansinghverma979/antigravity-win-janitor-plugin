@@ -98,4 +98,19 @@ The diagnostic routine evaluates:
 1. **Event Log ID 1002**: Quantifies explorer/DWM hangs over the last 72 hours.
 2. **WER Event ID 1001 (`AppHangXProcB1`)**: Inspects cross-process RPC targets to identify misbehaving shell extensions or COM hosts.
 3. **Compositor Footprint**: Tracks memory and handle counts for `dwm.exe`, `explorer.exe`, and `WindowsTerminal.exe`.
-4. **Display & Animation States**: Verifies resolution, refresh rate, and `MinAnimate` configuration.
+4. **Display, Preview & Animation States**: Verifies resolution, refresh rate, `MinAnimate`, `TaskbarAnimations`, `IconsOnly`, `DisablePreviewDesktop`, and `EnableAeroPeek`.
+
+---
+
+## 5. Blank Desktop & Window Previews in Task View
+
+When entering Task View (`Win+Tab`) or hovering over open desktops/windows, desktop cards may appear as black or blank rectangles instead of rendering live desktop wallpapers and open windows.
+
+### Root Causes:
+1. **`IconsOnly = 1`**: Located in `HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced` ("Always show icons, never thumbnails"). Tells the Windows Shell to completely suppress thumbnail generation across Explorer and Task View.
+2. **`DisablePreviewDesktop = 1`**: Located in `HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced`. Disables the desktop peek and preview rendering surface.
+3. **`EnableAeroPeek = 0`**: Located in `HKCU:\Software\Microsoft\Windows\DWM`. Prevents the DWM compositor from instantiating live thumbnail surfaces.
+4. **`VisualFXSetting = 2`**: Set when a user or script toggles "Adjust for best performance" in Windows Performance Options, which strips thumbnail generation and Aero Peek.
+
+### Autonomous Remediation:
+Running `janitor.ps1 fix-shell` automatically restores `IconsOnly = 0`, `DisablePreviewDesktop = 0`, `EnableAeroPeek = 1`, and `VisualFXSetting = 3` (Custom), enabling rich live desktop previews without losing system performance.
