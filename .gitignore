@@ -1,0 +1,16 @@
+# OS artifacts
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary & Log files
+*.log
+*.tmp
+temp/
+
+# IDE & Tooling
+.vscode/
+.idea/
+*.swp
+*.bak
+.system_generated/
