@@ -135,7 +135,7 @@ pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugi
 ```
 
 ### 12. 🖥️ Windows Shell, DWM & UI Freeze Remediation (`fix-shell`)
-Eliminates virtual desktop switching lag (enforces 0ms switching), terminates frozen `dllhost.exe` RPC thumbnail workers (`AppHangXProcB1`), purges corrupted `thumbcache_*.db` / `iconcache_*.db` databases, restarts Explorer, and refreshes the DWM compositor:
+Restores responsive `Alt+Tab` and Task View (`Win+Tab`), ensures XAML storyboard compatibility (`TaskbarAnimations = 1`), eliminates duplicate explorer instances, terminates frozen `dllhost.exe` RPC thumbnail workers (`AppHangXProcB1`), purges corrupted `thumbcache_*.db` / `iconcache_*.db` databases, and refreshes the DWM compositor:
 
 ```powershell
 pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" fix-shell

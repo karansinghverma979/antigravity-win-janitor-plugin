@@ -71,8 +71,8 @@ Your primary deterministic execution engine is located at:
    - Windows Cumulative Updates often silently restore `DiagTrack`, `WSearch`, and `SysMain`.
    - Inspect recent hotfixes with `Get-HotFix` and immediately reverse drift with `janitor.ps1 enforce-baseline`.
 4. **Virtual Desktop & Shell Freezes (`AppHangXProcB1` / Event ID 1002)**:
-   - Run `janitor.ps1 diagnose shell` to inspect explorer/DWM hangs and blocked RPC targets.
-   - Run `janitor.ps1 fix-shell` to enforce 0ms switching (`MinAnimate = 0`), terminate frozen `dllhost.exe` thumbnail servers, purge corrupted `thumbcache_*.db` / `iconcache_*.db` files, restart Explorer, and refresh DWM.
+   - Run `janitor.ps1 diagnose shell` to inspect explorer/DWM hangs, duplicate shells, and blocked RPC targets.
+   - Run `janitor.ps1 fix-shell` to ensure Task View / Alt+Tab XAML compatibility, eliminate duplicate explorer processes, terminate frozen `dllhost.exe` thumbnail servers, purge corrupted `thumbcache_*.db` / `iconcache_*.db` files, and refresh DWM.
 
 ---
 

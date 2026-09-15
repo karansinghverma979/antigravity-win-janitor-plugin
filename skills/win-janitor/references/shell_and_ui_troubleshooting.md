@@ -37,11 +37,12 @@ When high-resolution thumbnail generation collides with corrupted SQLite/Extensi
 
 ---
 
-## 2. Shell Animation Stutter on High-Refresh Displays
+## 2. Shell Animation Traps: The Task View (`Win+Tab`) & `Alt+Tab` Invariant
 
-Windows 11 enables window slide animations (`MinAnimate = 1`) by default.
-- On displays with 120Hz refresh rates and integrated graphics (Intel Iris Xe / Arc), calculating slide interpolation while rendering 2.8K composited surfaces across multiple virtual desktop states causes significant frame drops and compositor micro-stutters.
-- Disabling slide animations sets virtual desktop switching to **instant (0ms)**, eliminating the DWM transition pipeline overhead completely.
+In Windows 11 (24H2 XAML Shell architecture):
+- **Modern XAML Storyboard Dependency**: Modern `Alt+Tab` and Task View (`Win+Tab` / Multitasking View) are rendered by XAML Islands hosted in the shell. Their entrance transitions **directly subscribe to taskbar animation events**.
+- **The Registry Trap**: Setting `TaskbarAnimations = 0` or `MinAnimate = 0` directly in the registry suppresses the animation storyboard trigger entirely. As a result, pressing `Alt+Tab` or `Win+Tab` fails to instantiate the overlay, leaving multitasking unresponsive.
+- **The Duplicate Explorer Race Condition**: When `explorer.exe` is stopped, Windows Winlogon automatically resurrects the primary shell within milliseconds. If an automated script calls `Start-Process explorer.exe` without checking, **two concurrent explorer.exe processes** run in Session 1, fighting for global keyboard hooks (`WM_HOTKEY`, `RegisterShellHookWindow`) and breaking Task View.
 
 ---
 
@@ -49,18 +50,20 @@ Windows 11 enables window slide animations (`MinAnimate = 1`) by default.
 
 The remediation routine implemented in `janitor.ps1 fix-shell` executes in 5 sequential stages:
 
-### Stage 1: Animation Optimization
-Enforces 0ms switching and disables taskbar slide animations:
+### Stage 1: Shell & Task View Compatibility Verification
+Ensures the XAML storyboard transition pipeline is intact:
 ```powershell
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0" -Force
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 0 -Type DWord -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 1 -Type DWord -Force
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "1" -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 1 -Type DWord -Force
 ```
 
-### Stage 2: COM Worker Termination
-Forcefully terminates all active `dllhost.exe` processes to release file handles on thumbnail databases, followed by terminating `explorer.exe`:
+### Stage 2: COM Worker, Shell Hosts & Duplicate Explorer Termination
+Terminates all locked `dllhost.exe` workers, all duplicate `explorer.exe` processes, and modern shell hosts (`ShellExperienceHost`, `StartMenuExperienceHost`):
 ```powershell
 Get-Process dllhost -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+Stop-Process -Name explorer, ShellExperienceHost, StartMenuExperienceHost -Force -ErrorAction SilentlyContinue
+Start-Sleep -Milliseconds 1500
 ```
 
 ### Stage 3: Corrupted Database Purge
@@ -68,10 +71,15 @@ Purges all `thumbcache_*.db` and `iconcache_*.db` files from:
 - `%LOCALAPPDATA%\Microsoft\Windows\Explorer\`
 - `%LOCALAPPDATA%\IconCache.db`
 
-### Stage 4: Shell Restoration
-Relaunches a fresh `explorer.exe` process, triggering clean cache database initialization without legacy corruptions:
+### Stage 4: Single Authoritative Shell Resurrection
+Verifies Winlogon auto-restart and guarantees **exactly one** authoritative `explorer.exe` instance:
 ```powershell
-Start-Process explorer.exe
+Start-Sleep -Milliseconds 1500
+$ex = Get-Process explorer -ErrorAction SilentlyContinue
+if (-not $ex) {
+    Start-Process explorer.exe
+    Start-Sleep -Milliseconds 1500
+}
 ```
 
 ### Stage 5: Compositor Working Set Flush

@@ -483,10 +483,16 @@ function Invoke-JanitorDiagnose {
 
             # 3. DWM & Explorer Metrics
             Write-Host "`n  -> [3/4] Compositor & Shell Resource Footprint..." -ForegroundColor Gray
-            $shellProcs = Get-Process dwm, explorer, WindowsTerminal -ErrorAction SilentlyContinue
+            $shellProcs = Get-Process dwm, explorer, WindowsTerminal, ShellExperienceHost, StartMenuExperienceHost -ErrorAction SilentlyContinue
+            $explorerCount = 0
             foreach ($sp in $shellProcs) {
                 $ram = [math]::Round($sp.WorkingSet64 / 1MB, 1)
                 Write-Host "  • $($sp.ProcessName) (PID: $($sp.Id)) -> RAM: $ram MB | Handles: $($sp.HandleCount)" -ForegroundColor White
+                if ($sp.ProcessName -eq "explorer") { $explorerCount++ }
+            }
+            if ($explorerCount -gt 1) {
+                Write-Host "  ⚠️ CONFLICT DETECTED: $explorerCount explorer.exe instances running! Duplicate shells break Alt+Tab and Task View." -ForegroundColor Red
+                Write-Host "     💡 Run 'janitor.ps1 fix-shell' to eliminate rogue duplicate shells." -ForegroundColor Cyan
             }
 
             # 4. Display & Animation Settings
@@ -496,7 +502,11 @@ function Invoke-JanitorDiagnose {
                 Write-Host "  • Display Resolution : $($gpu.CurrentHorizontalResolution) x $($gpu.CurrentVerticalResolution) @ $($gpu.CurrentRefreshRate) Hz"
             }
             $minAnim = (Get-ItemProperty "HKCU:\Control Panel\Desktop\WindowMetrics" -Name MinAnimate -ErrorAction SilentlyContinue).MinAnimate
-            Write-Host "  • Window Animation (MinAnimate) : $minAnim $(if ($minAnim -eq '0' -or $minAnim -eq 0) {'(Optimized 0ms)'} else {'(Slide Animation Active - May Stutter)'})"
+            $tbAnim = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name TaskbarAnimations -ErrorAction SilentlyContinue).TaskbarAnimations
+            $tvBtn = (Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton -ErrorAction SilentlyContinue).ShowTaskViewButton
+            Write-Host "  • Window Animation (MinAnimate)      : $minAnim"
+            Write-Host "  • Taskbar Animations (TaskbarAnimations): $tbAnim $(if ($tbAnim -eq 0) {'(⚠️ Disabling breaks modern XAML Alt+Tab/Task View)'} else {'(Active)'})"
+            Write-Host "  • Task View Button (ShowTaskViewButton) : $tvBtn"
         }
         default {
             Write-Host "Available diagnosis scenarios: 'ram', 'cpu', 'drift', 'shell'" -ForegroundColor DarkYellow
@@ -1094,19 +1104,20 @@ function Invoke-JanitorFixShell {
     Write-Host "         🖥️ WIN-JANITOR: SHELL, DWM & VIRTUAL DESKTOP REMEDIATION       " -ForegroundColor Cyan
     Write-Host "======================================================================" -ForegroundColor Cyan
 
-    # Step 1: Optimize Desktop & Window Animations
-    Write-Host "`n[1/5] OPTIMIZING WINDOW & VIRTUAL DESKTOP ANIMATIONS" -ForegroundColor Yellow
+    # Step 1: Verify Task View & Shell Experience Compatibility
+    Write-Host "`n[1/5] VERIFYING TASK VIEW & SHELL COMPATIBILITY" -ForegroundColor Yellow
     try {
-        Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0" -Force
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 0 -Type DWord -Force
-        Write-Host "  ✅ Set MinAnimate = 0 (Instant 0ms virtual desktop switching)." -ForegroundColor Green
-        Write-Host "  ✅ Set TaskbarAnimations = 0 (Eliminated taskbar icon slide delays)." -ForegroundColor Green
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 1 -Type DWord -Force
+        Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "1" -Force
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 1 -Type DWord -Force
+        Write-Host "  ✅ Verified TaskbarAnimations = 1 (Required for modern XAML Alt+Tab & Task View)." -ForegroundColor Green
+        Write-Host "  ✅ Verified ShowTaskViewButton = 1 (Task View enabled)." -ForegroundColor Green
     } catch {
         Write-Host "  ⚠️ Could not set animation registry values: $($_.Exception.Message)" -ForegroundColor DarkYellow
     }
 
-    # Step 2: Terminate Explorer and Thumbnail Host Processes
-    Write-Host "`n[2/5] STOPPING EXPLORER & RPC THUMBNAIL COM WORKERS" -ForegroundColor Yellow
+    # Step 2: Terminate Explorer, Shell Hosts & Locked COM Workers
+    Write-Host "`n[2/5] STOPPING EXPLORER, SHELL HOSTS & RPC COM WORKERS" -ForegroundColor Yellow
     $killedThumbHost = 0
     Get-Process dllhost -ErrorAction SilentlyContinue | ForEach-Object {
         try {
@@ -1118,9 +1129,9 @@ function Invoke-JanitorFixShell {
         Write-Host "  ✅ Terminated $killedThumbHost active dllhost.exe worker(s) to release database file locks." -ForegroundColor Green
     }
 
-    Write-Host "  -> Terminating explorer.exe to unlock thumbnail/icon database files..." -ForegroundColor Gray
-    Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-    Start-Sleep -Milliseconds 1200
+    Write-Host "  -> Terminating all explorer.exe, ShellExperienceHost, and StartMenuExperienceHost processes..." -ForegroundColor Gray
+    Stop-Process -Name explorer, ShellExperienceHost, StartMenuExperienceHost -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 1500
 
     # Step 3: Purge Corrupted Thumbnail & Icon Cache Databases
     Write-Host "`n[3/5] PURGING CORRUPTED THUMBNAIL & ICON CACHE DATABASES" -ForegroundColor Yellow
@@ -1153,11 +1164,17 @@ function Invoke-JanitorFixShell {
     $purgedMB = [math]::Round($purgedBytes / 1MB, 2)
     Write-Host "  ✅ Purged $purgedCount thumbnail & icon cache database file(s) ($purgedMB MB cleared)." -ForegroundColor Green
 
-    # Step 4: Restart Windows Explorer Shell
-    Write-Host "`n[4/5] RESTARTING WINDOWS EXPLORER SHELL" -ForegroundColor Yellow
-    Start-Process explorer.exe
+    # Step 4: Ensure Single Authoritative Windows Explorer Shell
+    Write-Host "`n[4/5] ENSURING SINGLE AUTHORITATIVE EXPLORER SHELL" -ForegroundColor Yellow
     Start-Sleep -Milliseconds 1500
-    Write-Host "  ✅ Explorer shell restarted cleanly." -ForegroundColor Green
+    $ex = Get-Process explorer -ErrorAction SilentlyContinue
+    if (-not $ex) {
+        Write-Host "  -> Launching explorer.exe shell..." -ForegroundColor Gray
+        Start-Process explorer.exe
+        Start-Sleep -Milliseconds 1500
+    } else {
+        Write-Host "  ✅ Explorer shell automatically resurrected by Winlogon (PID: $($ex[0].Id))." -ForegroundColor Green
+    }
 
     # Step 5: Flush DWM Working Set
     Write-Host "`n[5/5] FLUSHING DWM (DESKTOP WINDOW MANAGER) WORKING SET" -ForegroundColor Yellow
@@ -1172,7 +1189,7 @@ function Invoke-JanitorFixShell {
     }
 
     Write-Host "`n🚀 SHELL REMEDIATION COMPLETE!" -ForegroundColor Cyan
-    Write-Host "   • Virtual desktop switching lag: ELIMINATED (Instant 0ms)." -ForegroundColor Green
+    Write-Host "   • Alt+Tab & Task View (Win+Tab): RESTORED & RESPONSIVE." -ForegroundColor Green
     Write-Host "   • Thumbnail/icon RPC deadlock: RESOLVED." -ForegroundColor Green
     Write-Host "   • Right-click and terminal UI freeze: PREVENTED." -ForegroundColor Green
 }

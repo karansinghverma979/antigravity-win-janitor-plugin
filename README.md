@@ -81,8 +81,8 @@ antigravity-win-janitor-plugin/
    - **`updates`**: Analyzes recent Windows Cumulative Updates and reverses any silent telemetry service restoration.
 
 6. **🖥️ Windows Shell & Virtual Desktop Freeze Remediation (`fix-shell`)**:
-   - Solves virtual desktop switching latency, desktop right-click freezes, and terminal UI lockups.
-   - Enforces 0ms switching (`MinAnimate = 0`), terminates blocked `dllhost.exe` RPC thumbnail workers, purges corrupted `thumbcache_*.db` / `iconcache_*.db` databases, restarts Explorer, and refreshes the DWM compositor.
+   - Solves virtual desktop switching latency, desktop right-click freezes, and broken `Alt+Tab` / `Win+Tab` multitasking views.
+   - Enforces Task View XAML storyboard compatibility (`TaskbarAnimations = 1`, `ShowTaskViewButton = 1`), terminates blocked `dllhost.exe` RPC thumbnail workers, purges corrupted `thumbcache_*.db` / `iconcache_*.db` databases, guarantees a single authoritative Explorer instance, and refreshes the DWM compositor.
 
 7. **🛡️ The Sanctuary Shield Invariant**:
    - Immutable security contract that safeguards designated sanctuary tasks, directories, and credentials from automated termination or deletion.
