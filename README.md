@@ -54,7 +54,8 @@ antigravity-win-janitor-plugin/
 
 2. **⚡ Win32 Working-Set Trimming (`trim`)**:
    - Uses the Win32 `EmptyWorkingSet` API (`psapi.dll`) to reclaim inactive working-set pages into the standby list.
-   - Cleans up detached zombie background processes (`Widgets`, `CrossDeviceResume`, `IGCCTray`) and forces garbage collection.
+   - Cleans up detached zombie background processes (`Widgets`, `CrossDeviceResume`, `IGCCTray`, `TextInputHost` memory-leak host).
+   - Terminates orphaned `msedgewebview2.exe` web instances spawned by `SearchHost` and forces garbage collection.
 
 3. **🧹 Deep Cache & Leftover Scrubber (`purge`)**:
    - Recursively deletes residual AppData/Local/Roaming folders left behind by uninstalled applications.
@@ -72,7 +73,9 @@ antigravity-win-janitor-plugin/
      - `DPS` (Diagnostic Policy Service)
      - `Spooler` (Print Spooler)
      - `TrkWks` (Distributed Link Tracking)
-   - Enforces Group Policy blocks against Edge background daemons and Windows 11 Widgets.
+   - Enforces Group Policy blocks against Edge background daemons, startup boost, **new tab prerender**, **sleeping tabs (5m)**, shopping assistants, and invasive shopping extensions (Keepa, Buyhatke).
+   - Enforces Group Policy blocks against Windows 11 Widgets.
+   - Enforces complete elimination of Windows Search Bing web searches, dynamic highlights, and WebView2 background rendering.
 
 5. **🔍 Scenario Diagnostics (`diagnose`)**:
    - **`diagnose ram`**: Deep memory allocation inspection.

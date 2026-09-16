@@ -226,6 +226,14 @@ function Invoke-JanitorTrim {
         }
     }
 
+    # Terminate SearchHost WebView2 web background instances if present
+    Get-CimInstance -Query "SELECT ProcessId, CommandLine FROM Win32_Process WHERE Name = 'msedgewebview2.exe'" -ErrorAction SilentlyContinue | ForEach-Object {
+        if ($_.CommandLine -match "SearchHost\.exe|EBWebView") {
+            Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+            Write-Host "  ✅ Terminated SearchHost WebView2 ghost (PID: $($_.ProcessId))" -ForegroundColor Green
+        }
+    }
+
     # EmptyWorkingSet across eligible processes
     Write-Host "  -> Flushing process working sets via EmptyWorkingSet API..." -ForegroundColor Gray
     $procs = Get-Process | Where-Object { 
@@ -386,7 +394,19 @@ function Invoke-JanitorBaseline {
         Set-ItemProperty -Path $edgePolicy -Name "StartupBoostEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $edgePolicy -Name "BackgroundModeEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $edgePolicy -Name "WebWidgetAllowed" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Write-Host "  ✅ Edge lightweight background policies verified." -ForegroundColor Green
+        Set-ItemProperty -Path $edgePolicy -Name "NewTabPagePrerenderEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $edgePolicy -Name "SleepingTabsEnabled" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $edgePolicy -Name "SleepingTabsTimeout" -Value 300 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $edgePolicy -Name "EdgeShoppingAssistantEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        
+        # Block intrusive shopping and tracker extensions
+        $blocklistKey = Join-Path $edgePolicy "ExtensionInstallBlocklist"
+        if (-not (Test-Path $blocklistKey)) { New-Item -Path $blocklistKey -Force -ErrorAction SilentlyContinue | Out-Null }
+        if (Test-Path $blocklistKey) {
+            Set-ItemProperty -Path $blocklistKey -Name "1" -Value "ejefaeioamebhekmfaclajddbpnnobje" -Force -ErrorAction SilentlyContinue # Keepa
+            Set-ItemProperty -Path $blocklistKey -Name "2" -Value "ojplmecpdpgccookcobabopnaifgidhf" -Force -ErrorAction SilentlyContinue # Buyhatke
+        }
+        Write-Host "  ✅ Edge lightweight, sleeping tabs, prerender block & extension policies verified." -ForegroundColor Green
     }
 
     # 4. Widgets Policy
@@ -395,6 +415,36 @@ function Invoke-JanitorBaseline {
         Set-ItemProperty -Path $dsh -Name "AllowNewsAndInterests" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
         Write-Host "  ✅ Windows 11 Widgets block policy verified." -ForegroundColor Green
     }
+
+    # 5. Windows Search Web & Highlights Elimination Policies
+    $searchPolicy = "HKLM:\Software\Policies\Microsoft\Windows\Windows Search"
+    if (-not (Test-Path $searchPolicy)) { New-Item -Path $searchPolicy -Force -ErrorAction SilentlyContinue | Out-Null }
+    if (Test-Path $searchPolicy) {
+        Set-ItemProperty -Path $searchPolicy -Name "DisableWebSearch" -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchPolicy -Name "ConnectedSearchUseWeb" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchPolicy -Name "ConnectedSearchUseWebOverMeteredConnections" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchPolicy -Name "AllowCortana" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchPolicy -Name "EnableDynamicContentInWSB" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchPolicy -Name "AllowSearchToUseLocation" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Write-Host "  ✅ Windows Search Bing web & dynamic content policies enforced." -ForegroundColor Green
+    }
+
+    # User Search Settings (HKCU)
+    $searchSettings = "HKCU:\Software\Microsoft\Windows\CurrentVersion\SearchSettings"
+    if (Test-Path $searchSettings) {
+        Set-ItemProperty -Path $searchSettings -Name "IsSearchHighlightsEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchSettings -Name "IsDynamicSearchBoxEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchSettings -Name "IsMSACloudSearchEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchSettings -Name "IsAADCloudSearchEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+    }
+    $searchKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
+    if (Test-Path $searchKey) {
+        Set-ItemProperty -Path $searchKey -Name "BingSearchEnabled" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchKey -Name "CortanaConsent" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchKey -Name "WebControlStatus" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $searchKey -Name "IsWebView2" -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+    }
+    Write-Host "  ✅ Local-only instant search settings enforced." -ForegroundColor Green
 }
 
 # ------------------------------------------------------------------------------

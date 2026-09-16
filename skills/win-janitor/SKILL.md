@@ -47,7 +47,7 @@ pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugi
 ```
 
 ### 2. ⚡ Instant Working-Set Memory Trim (`trim`)
-Calls the Win32 `EmptyWorkingSet` API across inactive background processes, terminates ghost helpers (`Widgets`, `CrossDeviceResume`, `IGCCTray`), and executes garbage collection without restarting apps:
+Calls the Win32 `EmptyWorkingSet` API across inactive background processes, terminates ghost helpers (`Widgets`, `CrossDeviceResume`, `IGCCTray`, `TextInputHost` memory-leak host), purges `SearchHost` Bing WebView2 instances, and executes garbage collection without restarting apps:
 
 ```powershell
 pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" trim
@@ -63,8 +63,9 @@ pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugi
 ### 4. 🛡️ Baseline Integrity Enforcement (`enforce-baseline`)
 Enforces the pristine operating system baseline:
 - Keeps the **10 bloat services** (`WSearch`, `SysMain`, `DiagTrack`, `InventorySvc`, `wuqisvc`, `whesvc`, `dptftcs`, `DPS`, `Spooler`, `TrkWks`) disabled.
-- Keeps Microsoft Edge background daemon and startup boost blocked via Group Policy.
+- Keeps Microsoft Edge background daemon, startup boost, **new tab prerender**, **sleeping tabs (5m)**, shopping assistant, and tracker extension blocklists enforced via Group Policy.
 - Keeps Windows 11 Widgets board blocked via Group Policy.
+- Keeps Windows Search **Bing cloud queries, Search Highlights, and WebView2 background web instances** permanently blocked.
 
 ```powershell
 sudo pwsh -NoProfile -File "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1" enforce-baseline

@@ -2,7 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.2.0",
   "description": "Dynamic rules assimilated autonomously or approved by user",
-  "ghostProcesses": [],
+  "ghostProcesses": [
+    "TextInputHost"
+  ],
   "ghostPaths": [],
   "disabledServices": [
     {
