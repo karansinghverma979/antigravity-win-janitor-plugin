@@ -40,6 +40,8 @@ If any command, sweep, or query targets a path containing `Sakshi`, immediately 
 Your primary deterministic execution engine is located at:
 `%USERPROFILE%\.gemini\config\plugins\win-janitor-plugin\skills\win-janitor\scripts\janitor.ps1`
 
+> 💡 **Native MCP Tool Calling**: When executing within Antigravity or tool-calling agent runtimes, you can also invoke the native MCP tools directly: `win_janitor_audit`, `win_janitor_trim`, `win_janitor_fix_shell`, `win_janitor_purge`, `win_janitor_diagnose`, `win_janitor_path_clean`, `win_janitor_reg_clean`, `win_janitor_enforce_baseline`, and `win_janitor_dev_hygiene`.
+
 ### Core Subcommands:
 - **`janitor.ps1 audit`**: Instant diagnostic scan of physical RAM, top 10 memory consumers, baseline services, and startup registry items.
 - **`janitor.ps1 trim`**: Flushes inactive process working sets via `EmptyWorkingSet` Win32 API, kills detached background ghosts (`Widgets`, `CrossDeviceResume`, `IGCCTray`), and forces garbage collection.

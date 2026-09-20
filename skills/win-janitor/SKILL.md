@@ -37,7 +37,9 @@ The authoritative management skill and runbook for maintaining Windows 11 workst
 
 ---
 
-## 🔄 The 5 Core Operations
+## 🔄 The Core Operations
+
+> ⚡ **Execution Modalities**: All operations below can be executed either via PowerShell 7 CLI (`janitor.ps1 <action>`) or via native Antigravity MCP tools (`win_janitor_<action>`).
 
 ### 1. 📊 System Health & Memory Audit (`audit`)
 Fast, non-invasive diagnostic check across physical RAM, top 10 memory consumers, baseline services, and startup registry keys:
