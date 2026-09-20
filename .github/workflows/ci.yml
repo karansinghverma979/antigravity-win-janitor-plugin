@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# OpenSSF Least Privilege Invariant
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Scripts & Architecture
+    runs-on: windows-latest
+    steps:
+      # Pinned to immutable commit SHA (actions/checkout@v7.0.1)
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate PowerShell Script Syntax
+        shell: pwsh
+        run: |
+          $scripts = Get-ChildItem -Path . -Filter *.ps1 -Recurse
+          Write-Host "Found $($scripts.Count) PowerShell scripts to validate."
+          foreach ($script in $scripts) {
+            $errors = $null
+            $tokens = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseFile($script.FullName, [ref]$tokens, [ref]$errors)
+            if ($errors) {
+              Write-Error "Syntax error detected in $($script.FullName): $($errors)"
+              exit 1
+            }
+            Write-Host "✔ Verified clean syntax: $($script.Name)"
+          }
+
+      - name: Validate JSON Schema & Manifests
+        shell: pwsh
+        run: |
+          $jsonFiles = Get-ChildItem -Path . -Filter *.json -Recurse
+          Write-Host "Found $($jsonFiles.Count) JSON files to validate."
+          foreach ($file in $jsonFiles) {
+            try {
+              $null = Get-Content $file.FullName -Raw | ConvertFrom-Json
+              Write-Host "✔ Verified valid JSON: $($file.Name)"
+            } catch {
+              Write-Error "Invalid JSON in $($file.FullName): $($_.Exception.Message)"
+              exit 1
+            }
+          }
+
+      - name: Path Portability Audit
+        shell: pwsh
+        run: |
+          $trackedFiles = git ls-files
+          $leaks = @()
+          foreach ($file in $trackedFiles) {
+            if ($file -match '\.(png|jpg|ico|exe|dll)$') { continue }
+            $content = Get-Content $file -Raw -ErrorAction SilentlyContinue
+            if ($content -match '(?i)[a-z]:\\users\\[a-z0-9_\.-]+' -and $content -notmatch '<[a-z0-9_\.-]+>' -and $content -notmatch 'placeholder') {
+              $leaks += $file
+            }
+          }
+          if ($leaks.Count -gt 0) {
+            Write-Error "Absolute local path leaks detected in: $($leaks -join ', ')"
+            exit 1
+          }
+          Write-Host "✔ Zero absolute path leaks detected in tracked git assets."

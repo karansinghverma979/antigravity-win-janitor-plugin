@@ -48,6 +48,19 @@ function Get-JanitorPluginRoot {
     }
 }
 
+function Get-JanitorBackupDir {
+    if ($env:LOCALAPPDATA) {
+        $backupDir = Join-Path $env:LOCALAPPDATA "win-janitor\backups"
+    } else {
+        $root = Get-JanitorPluginRoot
+        $backupDir = Join-Path $root ".local\backups"
+    }
+    if (-not (Test-Path $backupDir)) {
+        New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+    }
+    return $backupDir
+}
+
 function Get-LearnedRules {
     $root = Get-JanitorPluginRoot
     $rulesFile = Join-Path $root "learned_rules.json"
@@ -673,11 +686,7 @@ function Invoke-JanitorPathClean {
     }
 
     # Backup PATH before pruning
-    $root = Get-JanitorPluginRoot
-    $backupDir = Join-Path $root "backups"
-    if (-not (Test-Path $backupDir)) {
-        New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
-    }
+    $backupDir = Get-JanitorBackupDir
     $ts = (Get-Date).ToString("yyyyMMdd_HHmmss")
     $backupFile = Join-Path $backupDir "path_backup_$ts.txt"
     $rawPath | Set-Content -Path $backupFile -Encoding UTF8
@@ -732,11 +741,7 @@ function Invoke-JanitorRegClean {
         return
     }
 
-    $root = Get-JanitorPluginRoot
-    $backupDir = Join-Path $root "backups"
-    if (-not (Test-Path $backupDir)) {
-        New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
-    }
+    $backupDir = Get-JanitorBackupDir
 
     $ts = (Get-Date).ToString("yyyyMMdd_HHmmss")
     $purgedCount = 0

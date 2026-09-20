@@ -1,0 +1,17 @@
+{
+  "win-janitor-shield": {
+    "enabled": false,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -Command \"if ($env:COMMAND_LINE -match 'Sakshi') { Write-Host '[Win-Janitor Shield] Sakshi sanctuary protection active.' }\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

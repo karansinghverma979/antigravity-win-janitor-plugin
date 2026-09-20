@@ -27,7 +27,7 @@ When software (e.g. Ollama, VMware, old SDKs, discarded editors) is uninstalled,
 ### The Solution: `janitor.ps1 path-clean`
 1. **Deduplication**: Case-insensitive normalization (`TrimEnd('\')`) and hash set tracking.
 2. **Dead Path Pruning**: Verifies path existence via `Test-Path`.
-3. **Automated Safety Backup**: Exports pre-cleanup PATH to `$PluginRoot\backups\path_backup_<timestamp>.txt`.
+3. **Automated Safety Backup**: Exports pre-cleanup PATH to `%LOCALAPPDATA%\win-janitor\backups\path_backup_<timestamp>.txt` (or `.local\backups` fallback).
 4. **Instant In-Memory & Persistent Sync**: Updates `[Environment]::SetEnvironmentVariable` and `$env:PATH`.
 
 ---
@@ -38,7 +38,7 @@ When software (e.g. Ollama, VMware, old SDKs, discarded editors) is uninstalled,
 Applications frequently leave abandoned vendor keys in `HKCU:\Software` and `HKLM:\Software` after uninstallation (e.g., `Google`, `VMware, Inc.`, `Notion`, `Anytype`, `Ollama`).
 
 ### The Solution: `janitor.ps1 reg-clean`
-1. **Pre-Purge Backup**: Exports target keys using `reg.exe export` into `$PluginRoot\backups\reg_*.reg`.
+1. **Pre-Purge Backup**: Exports target keys using `reg.exe export` into `%LOCALAPPDATA%\win-janitor\backups\reg_*.reg` (or `.local\backups` fallback).
 2. **Safe Deletion**: Deletes orphaned vendor hives cleanly.
 3. **OS-Bridge Resilience**: If a subkey is retained by active OS policies (e.g., Microsoft Edge's `BrowserCore` native messaging host under `Google\Chrome`), the engine logs it safely without erroring.
 

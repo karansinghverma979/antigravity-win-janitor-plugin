@@ -10,11 +10,13 @@ An enterprise-grade, deterministic Antigravity plugin engineered to keep Windows
 
 ```
 antigravity-win-janitor-plugin/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                         # OpenSSF-hardened CI pipeline
 ├── agents/
 │   └── win_janitor.md                     # Declarative Antigravity Agent definition
-├── plugin.json                            # Antigravity Plugin manifest
-├── drift.json                             # Anomaly buffer for detected drift & candidates
-├── learned_rules.json                     # Dynamic schema-driven assimilated rules
+├── rules/
+│   └── AGENTS.md                          # Operating invariants & sanctuary rules
 ├── skills/
 │   └── win-janitor/
 │       ├── SKILL.md                       # Antigravity Skill instructions & router
@@ -28,8 +30,14 @@ antigravity-win-janitor-plugin/
 │           ├── shell_and_ui_troubleshooting.md # DWM, virtual desktop & shell freeze runbook
 │           ├── update_and_servicing.md    # Component store (WinSxS) & update hygiene
 │           └── windows_internals_memory.md# Win32 working set & paging internals
-├── .gitignore
-├── LICENSE
+├── drift.json                             # Anomaly buffer for detected drift & candidates
+├── hooks.json                             # Optional declarative hooks definition
+├── learned_rules.json                     # Dynamic schema-driven assimilated rules
+├── plugin.json                            # Antigravity Plugin manifest
+├── .gitattributes                         # Line-ending firewall (CRLF for PS1, LF for rest)
+├── .gitignore                             # Runtime state & local secrets quarantine
+├── LICENSE                                # MIT License
+├── SECURITY.md                            # OpenSSF vulnerability disclosure policy
 └── README.md
 ```
 
