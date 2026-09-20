@@ -1,8 +1,48 @@
 # 🧹 antigravity-win-janitor-plugin
 
+<p align="center">
+  <img src="assets/poster.png" alt="Win-Janitor Hero Poster" width="100%" style="border-radius: 12px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/karansinghverma979/antigravity-win-janitor-plugin/actions/workflows/ci.yml">
+    <img src="https://github.com/karansinghverma979/antigravity-win-janitor-plugin/actions/workflows/ci.yml/badge.svg" alt="CI Status" />
+  </a>
+  <a href="https://securityscorecards.dev">
+    <img src="https://img.shields.io/badge/OpenSSF-Hardened%20Grade%20A-blue.svg" alt="OpenSSF Hardened" />
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" />
+  </a>
+  <a href="https://github.com/PowerShell/PowerShell">
+    <img src="https://img.shields.io/badge/PowerShell-7.0%2B-blue.svg" alt="PowerShell 7+" />
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/badge/MCP%20Server-Python%20Stdio-green.svg" alt="MCP Server Python" />
+  </a>
+  <a href="https://github.com/karansinghverma979/antigravity-win-janitor-plugin">
+    <img src="https://img.shields.io/badge/Google%20Antigravity-Plugin%20v1.3.0-orange.svg" alt="Google Antigravity Plugin" />
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/badge/Workstation%20Quarantine-Zero%20Leaks-success.svg" alt="Zero-Leak Guarantee" />
+  </a>
+</p>
+
 > **Autonomous Windows 11 System Janitor, Bloatware Eradicator & Performance Governor Plugin for Google Antigravity.**
 
-An enterprise-grade, deterministic Antigravity plugin engineered to keep Windows 11 developer workstations in a low-latency, zero-bloat state. It combines an autonomous AI agent (`win_janitor`), specialized skills, a Win32 API-backed PowerShell engine (`janitor.ps1`), and root-cause diagnostic playbooks.
+An enterprise-grade, deterministic Antigravity plugin engineered to keep Windows 11 developer workstations in a low-latency, zero-bloat state. It combines an autonomous AI agent (`win_janitor`), specialized skills, a Win32 API-backed PowerShell engine (`janitor.ps1`), a native Python stdio MCP server, and root-cause diagnostic playbooks.
+
+---
+
+## 🎨 Brand Assets & Design Poster
+
+The repository comes equipped with high-resolution vector and raster branding assets designed for GitHub releases, docs, and banners:
+
+| Asset | Type | Dimensions | Preview / File Link |
+| :--- | :--- | :--- | :--- |
+| **Hero Poster / Banner** | Vector SVG & Rendered PNG | 1200 × 500 | [`assets/poster.svg`](assets/poster.svg) • [`assets/poster.png`](assets/poster.png) |
+| **Brand Logo / Icon** | Vector SVG & Rendered PNG | 512 × 512 | [`assets/logo.svg`](assets/logo.svg) • [`assets/logo.png`](assets/logo.png) |
+| **Compact Banner** | Vector SVG | 1200 × 500 | [`assets/banner.svg`](assets/banner.svg) |
 
 ---
 
@@ -11,10 +51,23 @@ An enterprise-grade, deterministic Antigravity plugin engineered to keep Windows
 ```
 antigravity-win-janitor-plugin/
 ├── .github/
-│   └── workflows/
-│       └── ci.yml                         # OpenSSF-hardened CI pipeline
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.yml                 # Interactive GitHub bug report form
+│   │   └── feature_request.yml            # Interactive GitHub feature request form
+│   ├── workflows/
+│   │   └── ci.yml                         # OpenSSF-hardened CI pipeline
+│   ├── PULL_REQUEST_TEMPLATE.md           # Security & path portability checklist
+│   └── dependabot.yml                     # Automated GitHub Actions dependency scanner
 ├── agents/
 │   └── win_janitor.md                     # Declarative Antigravity Agent definition
+├── assets/
+│   ├── banner.svg                         # Vector header banner
+│   ├── logo.png                           # Rendered 512x512 PNG icon
+│   ├── logo.svg                           # Scalable vector logo icon
+│   ├── poster.png                         # Rendered 1200x500 hero poster
+│   └── poster.svg                         # Scalable vector hero poster
+├── mcp/
+│   └── server.py                          # Pure Python stdio JSON-RPC MCP server (9 tools)
 ├── rules/
 │   └── AGENTS.md                          # Operating invariants & sanctuary rules
 ├── skills/
@@ -33,6 +86,7 @@ antigravity-win-janitor-plugin/
 ├── drift.json                             # Anomaly buffer for detected drift & candidates
 ├── hooks.json                             # Optional declarative hooks definition
 ├── learned_rules.json                     # Dynamic schema-driven assimilated rules
+├── mcp_config.json                        # Declarative MCP server registration
 ├── plugin.json                            # Antigravity Plugin manifest
 ├── .gitattributes                         # Line-ending firewall (CRLF for PS1, LF for rest)
 ├── .gitignore                             # Runtime state & local secrets quarantine
@@ -107,10 +161,10 @@ antigravity-win-janitor-plugin/
    - Audits Windows Package Manager for pending application upgrades (`winget upgrade`).
 
 10. **🛣️ Environment PATH Deduplication & Dead Directory Pruner (`path-clean`)**:
-    - Scans User `PATH`, removes redundant duplicates, prunes non-existent directory paths, and creates timestamped pre-cleanup backups.
+    - Scans User `PATH`, removes redundant duplicates, prunes non-existent directory paths, and creates timestamped pre-cleanup backups outside git in `%LOCALAPPDATA%\win-janitor\backups\`.
 
 11. **🧹 Residual Registry Hive Purger (`reg-clean`)**:
-    - Scans and purges leftover vendor registry keys from uninstalled software (`Google`, `VMware`, `Notion`, `Ollama`, etc.) with pre-deletion `.reg` export backups.
+    - Scans and purges leftover vendor registry keys from uninstalled software (`Google`, `VMware`, `Notion`, `Ollama`, etc.) with pre-deletion `.reg` export backups in `%LOCALAPPDATA%\win-janitor\backups\`.
 
 12. **🐍 Developer Environment & Python Isolation (`dev-hygiene`)**:
     - Audits global Python pip installations to prevent dependency pollution and ensure virtual environment isolation (`uv` / `venv`).
@@ -128,7 +182,28 @@ Clone or copy this repository into your user Antigravity plugin directory:
 git clone https://github.com/karansinghverma979/antigravity-win-janitor-plugin.git "$env:USERPROFILE\.gemini\config\plugins\win-janitor-plugin"
 ```
 
-Once placed, Antigravity automatically detects the plugin, registers the `win_janitor` agent, and activates the `win-janitor` skill across all sessions.
+Once placed, Antigravity automatically:
+- Registers the `win-janitor` MCP server via `mcp_config.json`.
+- Registers the `win_janitor` agent.
+- Activates the `win-janitor` skill and operational invariants across all sessions.
+
+---
+
+## ⚡ Native MCP Server Tools
+
+The plugin includes a zero-dependency, pure Python stdio MCP server (`mcp/server.py`) exposing 9 native tools to AI agents:
+
+| MCP Tool | Description |
+| :--- | :--- |
+| `win_janitor_audit` | Instant diagnostic scan of physical RAM, top 10 memory consumers, baseline services, and startup items. |
+| `win_janitor_trim` | Flush inactive working sets via `EmptyWorkingSet` Win32 API and eliminate background ghosts. |
+| `win_janitor_purge` | Deep wipe of leftover AppData caches, temp files, and orphaned folders. |
+| `win_janitor_fix_shell` | Remediate Windows Shell, virtual desktop lag, DWM compositor stalls, and thumbnail RPC deadlocks. |
+| `win_janitor_diagnose` | Root-cause analysis (`scenario`: `'ram'`, `'cpu'`, `'shell'`, `'drift'`). |
+| `win_janitor_path_clean` | Deduplicate User PATH and prune dead directories with decoupled backup. |
+| `win_janitor_reg_clean` | Remove residual vendor registry hives from uninstalled software. |
+| `win_janitor_enforce_baseline` | Enforce 10 bloat/telemetry services to Disabled and verify Edge/Widget policies. |
+| `win_janitor_dev_hygiene` | Audit global Python pip installations vs. virtual environments. |
 
 ---
 
@@ -205,8 +280,9 @@ Or invoke via subagent orchestration:
 ## 🔒 Security & Privacy
 
 - **Zero Telemetry**: Collects zero telemetry, zero analytics, and makes zero network calls.
-- **Path Portability**: Fully decoupled from hardcoded user paths using `$env:USERPROFILE` and dynamic environment variables.
+- **Path Portability**: Fully decoupled from hardcoded user paths using dynamic environment expansion (`$env:USERPROFILE`, `%LOCALAPPDATA%`).
 - **Fail-Safe Shield**: `Assert-SakshiShield` stops any destructive call if a protected target is matched.
+- **Decoupled Backups**: Registry dumps and PATH backups are safely stored in `%LOCALAPPDATA%\win-janitor\backups\` outside the git working tree.
 
 ---
 

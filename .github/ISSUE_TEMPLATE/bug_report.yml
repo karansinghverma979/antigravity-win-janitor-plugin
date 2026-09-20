@@ -1,0 +1,29 @@
+name: 🐛 Bug Report
+description: File a bug report for win-janitor
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report an issue with win-janitor!
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what went wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Subcommand executed (e.g. `janitor.ps1 trim` or `janitor.ps1 fix-shell`) and exact error output.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Workstation Environment
+      description: Windows 11 Build, PowerShell version, etc.
+      placeholder: Windows 11 23H2 / PowerShell 7.4 / Antigravity CLI
+    validations:
+      required: false

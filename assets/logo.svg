@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070B14" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#030712" />
+    </linearGradient>
+
+    <!-- Emerald / Cyan Purge Gradient -->
+    <linearGradient id="cleanNeon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+
+    <!-- Windows Fluent Tile Blue -->
+    <linearGradient id="tileBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0.7" />
+    </linearGradient>
+
+    <linearGradient id="tileCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0D9488" stop-opacity="0.7" />
+    </linearGradient>
+
+    <!-- Shield Gold / Emerald -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.95" />
+      <stop offset="50%" stop-color="#06B6D4" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.95" />
+    </linearGradient>
+
+    <linearGradient id="goldBeam" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Card -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#bgGrad)" stroke="url(#cleanNeon)" stroke-width="4" stroke-opacity="0.7" />
+
+  <!-- High-Tech Hex / Grid Background -->
+  <g opacity="0.07" stroke="#38BDF8" stroke-width="1.5">
+    <line x1="64" y1="64" x2="448" y2="64" />
+    <line x1="64" y1="128" x2="448" y2="128" />
+    <line x1="64" y1="192" x2="448" y2="192" />
+    <line x1="64" y1="256" x2="448" y2="256" />
+    <line x1="64" y1="320" x2="448" y2="320" />
+    <line x1="64" y1="384" x2="448" y2="384" />
+    <line x1="64" y1="448" x2="448" y2="448" />
+
+    <line x1="64" y1="64" x2="64" y2="448" />
+    <line x1="128" y1="64" x2="128" y2="448" />
+    <line x1="192" y1="64" x2="192" y2="448" />
+    <line x1="256" y1="64" x2="256" y2="448" />
+    <line x1="320" y1="64" x2="320" y2="448" />
+    <line x1="384" y1="64" x2="384" y2="448" />
+    <line x1="448" y1="64" x2="448" y2="448" />
+  </g>
+
+  <!-- Glowing Corner Accents -->
+  <path d="M 36 80 L 36 36 L 80 36" fill="none" stroke="#10B981" stroke-width="3" opacity="0.8" />
+  <path d="M 476 80 L 476 36 L 432 36" fill="none" stroke="#38BDF8" stroke-width="3" opacity="0.8" />
+  <path d="M 36 432 L 36 476 L 80 476" fill="none" stroke="#06B6D4" stroke-width="3" opacity="0.8" />
+  <path d="M 476 432 L 476 476 L 432 476" fill="none" stroke="#3B82F6" stroke-width="3" opacity="0.8" />
+
+  <!-- Outer Energy Purge Orbit -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#10B981" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.4" />
+  <circle cx="256" cy="256" r="195" fill="none" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 12" opacity="0.5" />
+
+  <!-- Windows 11 Four Tiles (Architectural Base) -->
+  <g transform="translate(146, 146)">
+    <!-- Top-Left Tile -->
+    <rect x="0" y="0" width="102" height="102" rx="14" fill="url(#tileBlue)" filter="url(#softGlow)" />
+    <!-- Top-Right Tile -->
+    <rect x="118" y="0" width="102" height="102" rx="14" fill="url(#tileCyan)" filter="url(#softGlow)" />
+    <!-- Bottom-Left Tile -->
+    <rect x="0" y="118" width="102" height="102" rx="14" fill="url(#tileCyan)" filter="url(#softGlow)" />
+    <!-- Bottom-Right Tile -->
+    <rect x="118" y="118" width="102" height="102" rx="14" fill="url(#tileBlue)" filter="url(#softGlow)" />
+  </g>
+
+  <!-- Central Sakshi Shield & Sentinel Core -->
+  <g filter="url(#neonGlow)">
+    <!-- Protective Shield Emblem -->
+    <path d="M 256 125 
+             C 315 125 350 145 350 145 
+             C 350 245 295 330 256 365 
+             C 217 330 162 245 162 145 
+             C 162 145 197 125 256 125 Z" 
+          fill="url(#shieldGrad)" 
+          stroke="#FFFFFF" 
+          stroke-width="3" 
+          stroke-opacity="0.8" />
+  </g>
+
+  <!-- Cybernetic Broom & Memory Laser Beam -->
+  <g filter="url(#softGlow)">
+    <!-- Broom / Sentinel Wand Diagonal Handle -->
+    <line x1="190" y1="322" x2="322" y2="190" stroke="url(#goldBeam)" stroke-width="7" stroke-linecap="round" />
+    <circle cx="325" cy="187" r="7" fill="#FCD34D" />
+    
+    <!-- Broom Purge Sweep Bristles -->
+    <path d="M 188 324 L 155 357 C 145 367 150 375 165 375 L 215 375 C 225 375 228 364 218 354 Z" fill="url(#cleanNeon)" />
+    
+    <!-- Energy Sweep Radiance Lines -->
+    <path d="M 140 370 Q 155 390 180 395" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" />
+    <path d="M 160 388 Q 185 408 215 408" fill="none" stroke="#06B6D4" stroke-width="3" stroke-linecap="round" />
+    <path d="M 200 405 Q 225 415 255 410" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Central Sentinel Eye / Core -->
+  <circle cx="256" cy="235" r="28" fill="#0B1329" stroke="#38BDF8" stroke-width="3" />
+  <circle cx="256" cy="235" r="14" fill="#10B981" filter="url(#softGlow)" />
+  <circle cx="256" cy="235" r="6" fill="#FFFFFF" />
+
+  <!-- Dynamic HUD Telemetry Data -->
+  <text x="256" y="445" text-anchor="middle" font-family="'Consolas', 'JetBrains Mono', monospace" font-size="15" font-weight="700" fill="#38BDF8" letter-spacing="3">
+    WIN-JANITOR // GOVERNOR
+  </text>
+  <text x="256" y="468" text-anchor="middle" font-family="'Consolas', 'JetBrains Mono', monospace" font-size="11" fill="#10B981" letter-spacing="2">
+    EMPTY WORKING SET • ZERO BLOAT
+  </text>
+</svg>

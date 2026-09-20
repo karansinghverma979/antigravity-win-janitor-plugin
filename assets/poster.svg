@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050811" />
+      <stop offset="40%" stop-color="#0B132B" />
+      <stop offset="80%" stop-color="#070C1A" />
+      <stop offset="100%" stop-color="#03060E" />
+    </linearGradient>
+
+    <linearGradient id="neonCyanEmerald" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.95" />
+      <stop offset="50%" stop-color="#06B6D4" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.95" />
+    </linearGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.8" />
+    </linearGradient>
+
+    <linearGradient id="tileBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0.7" />
+    </linearGradient>
+
+    <linearGradient id="tileCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0D9488" stop-opacity="0.7" />
+    </linearGradient>
+
+    <!-- Glow Filters -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Canvas -->
+  <rect width="1200" height="500" rx="16" fill="url(#bgGrad)" stroke="#1E293B" stroke-width="2" />
+
+  <!-- Cybernetic HUD Grid -->
+  <g opacity="0.05" stroke="#38BDF8" stroke-width="1">
+    <line x1="0" y1="50" x2="1200" y2="50" />
+    <line x1="0" y1="100" x2="1200" y2="100" />
+    <line x1="0" y1="150" x2="1200" y2="150" />
+    <line x1="0" y1="200" x2="1200" y2="200" />
+    <line x1="0" y1="250" x2="1200" y2="250" />
+    <line x1="0" y1="300" x2="1200" y2="300" />
+    <line x1="0" y1="350" x2="1200" y2="350" />
+    <line x1="0" y1="400" x2="1200" y2="400" />
+    <line x1="0" y1="450" x2="1200" y2="450" />
+
+    <line x1="100" y1="0" x2="100" y2="500" />
+    <line x1="200" y1="0" x2="200" y2="500" />
+    <line x1="300" y1="0" x2="300" y2="500" />
+    <line x1="400" y1="0" x2="400" y2="500" />
+    <line x1="500" y1="0" x2="500" y2="500" />
+    <line x1="600" y1="0" x2="600" y2="500" />
+    <line x1="700" y1="0" x2="700" y2="500" />
+    <line x1="800" y1="0" x2="800" y2="500" />
+    <line x1="900" y1="0" x2="900" y2="500" />
+    <line x1="1000" y1="0" x2="1000" y2="500" />
+    <line x1="1100" y1="0" x2="1100" y2="500" />
+  </g>
+
+  <!-- Ambient Glow Blobs -->
+  <circle cx="220" cy="250" r="160" fill="#06B6D4" opacity="0.12" filter="url(#glow)" />
+  <circle cx="1050" cy="120" r="140" fill="#10B981" opacity="0.08" filter="url(#glow)" />
+
+  <!-- LEFT EMBLEM: Cybernetic Windows Sentinel Core -->
+  <g transform="translate(60, 90)">
+    <!-- Outer Orbit Circles -->
+    <circle cx="160" cy="160" r="145" fill="none" stroke="#10B981" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.4" />
+    <circle cx="160" cy="160" r="155" fill="none" stroke="#38BDF8" stroke-width="1" stroke-dasharray="3 10" opacity="0.6" />
+
+    <!-- 4 Fluent Tiles -->
+    <g transform="translate(90, 90)">
+      <rect x="0" y="0" width="65" height="65" rx="10" fill="url(#tileBlue)" filter="url(#subtleGlow)" />
+      <rect x="75" y="0" width="65" height="65" rx="10" fill="url(#tileCyan)" filter="url(#subtleGlow)" />
+      <rect x="0" y="75" width="65" height="65" rx="10" fill="url(#tileCyan)" filter="url(#subtleGlow)" />
+      <rect x="75" y="75" width="65" height="65" rx="10" fill="url(#tileBlue)" filter="url(#subtleGlow)" />
+    </g>
+
+    <!-- Sakshi Shield -->
+    <path d="M 160 85 
+             C 198 85 220 98 220 98 
+             C 220 162 185 218 160 240 
+             C 135 218 100 162 100 98 
+             C 100 98 122 85 160 85 Z" 
+          fill="url(#shieldGrad)" 
+          stroke="#FFFFFF" 
+          stroke-width="2.5" 
+          stroke-opacity="0.85" 
+          filter="url(#subtleGlow)" />
+
+    <!-- Cyber Broom / Laser Purge Beam -->
+    <line x1="120" y1="210" x2="200" y2="130" stroke="#FCD34D" stroke-width="5" stroke-linecap="round" filter="url(#subtleGlow)" />
+    <circle cx="203" cy="127" r="5" fill="#FCD34D" />
+    <path d="M 118 212 L 95 235 C 88 242 92 248 102 248 L 138 248 C 145 248 147 240 140 233 Z" fill="url(#neonCyanEmerald)" />
+
+    <!-- Core Sensor Eye -->
+    <circle cx="160" cy="155" r="18" fill="#0B1329" stroke="#38BDF8" stroke-width="2.5" />
+    <circle cx="160" cy="155" r="8" fill="#10B981" filter="url(#subtleGlow)" />
+    <circle cx="160" cy="155" r="3" fill="#FFFFFF" />
+
+    <!-- Status Indicator Below Core -->
+    <rect x="70" y="280" width="180" height="26" rx="6" fill="#0F172A" stroke="#10B981" stroke-width="1.5" stroke-opacity="0.7" />
+    <circle cx="86" cy="293" r="4" fill="#10B981" filter="url(#subtleGlow)" />
+    <text x="98" y="297" font-family="'Consolas', monospace" font-size="11" font-weight="700" fill="#38BDF8" letter-spacing="1.5">
+      STATE: PRISTINE 0%
+    </text>
+  </g>
+
+  <!-- RIGHT SECTION: Header, Pods & Metadata -->
+  <!-- Main Titles -->
+  <g transform="translate(420, 65)">
+    <!-- Antigravity Tag -->
+    <rect x="0" y="0" width="220" height="24" rx="6" fill="#06B6D4" fill-opacity="0.15" stroke="#06B6D4" stroke-width="1" />
+    <text x="10" y="16" font-family="'Consolas', monospace" font-size="11" font-weight="700" fill="#22D3EE" letter-spacing="2">
+      GOOGLE ANTIGRAVITY PLUGIN
+    </text>
+
+    <!-- Hero Title -->
+    <text x="0" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="900" fill="#FFFFFF" letter-spacing="-0.5">
+      WIN-JANITOR
+    </text>
+    <text x="320" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="300" fill="#38BDF8" letter-spacing="-0.5">
+      // SENTINEL
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="98" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#94A3B8" letter-spacing="0.2">
+      Autonomous Windows 11 System Janitor, Bloat Eradicator &amp; Performance Governor
+    </text>
+  </g>
+
+  <!-- 3 High-Tech Capability Cards -->
+  <g transform="translate(420, 195)">
+    <!-- Card 1: RAM Governor -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="230" height="195" rx="12" fill="url(#cardGrad)" stroke="#10B981" stroke-width="1.5" stroke-opacity="0.5" />
+      <circle cx="28" cy="28" r="14" fill="#10B981" fill-opacity="0.15" />
+      <text x="28" y="33" text-anchor="middle" font-family="sans-serif" font-size="14">⚡</text>
+      <text x="52" y="32" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#F8FAFC">RAM Governor</text>
+      
+      <line x1="16" y1="52" x2="214" y2="52" stroke="#334155" stroke-width="1" />
+      
+      <text x="16" y="75" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• EmptyWorkingSet API</text>
+      <text x="16" y="95" font-family="'Consolas', monospace" font-size="11" fill="#94A3B8">  Flushes idle pages</text>
+      <text x="16" y="120" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• Ghost Process Buster</text>
+      <text x="16" y="140" font-family="'Consolas', monospace" font-size="11" fill="#94A3B8">  TextInputHost, Widgets</text>
+      <text x="16" y="165" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• Standby List Recycle</text>
+    </g>
+
+    <!-- Card 2: Sakshi Sanctuary Shield -->
+    <g transform="translate(245, 0)">
+      <rect x="0" y="0" width="230" height="195" rx="12" fill="url(#cardGrad)" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.5" />
+      <circle cx="28" cy="28" r="14" fill="#38BDF8" fill-opacity="0.15" />
+      <text x="28" y="33" text-anchor="middle" font-family="sans-serif" font-size="14">🛡️</text>
+      <text x="52" y="32" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#F8FAFC">Sakshi Shield</text>
+      
+      <line x1="16" y1="52" x2="214" y2="52" stroke="#334155" stroke-width="1" />
+      
+      <text x="16" y="75" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• Zero-Mutation Contract</text>
+      <text x="16" y="95" font-family="'Consolas', monospace" font-size="11" fill="#94A3B8">  Immutable protection</text>
+      <text x="16" y="120" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• Task &amp; Path Sanctuary</text>
+      <text x="16" y="140" font-family="'Consolas', monospace" font-size="11" fill="#94A3B8">  \Sakshi &amp; Void\Sakshi</text>
+      <text x="16" y="165" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• Fail-Safe Assertion</text>
+    </g>
+
+    <!-- Card 3: Zero-Bloat Eradicator -->
+    <g transform="translate(490, 0)">
+      <rect x="0" y="0" width="250" height="195" rx="12" fill="url(#cardGrad)" stroke="#06B6D4" stroke-width="1.5" stroke-opacity="0.5" />
+      <circle cx="28" cy="28" r="14" fill="#06B6D4" fill-opacity="0.15" />
+      <text x="28" y="33" text-anchor="middle" font-family="sans-serif" font-size="14">🧹</text>
+      <text x="52" y="32" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#F8FAFC">Bloat Eradicator</text>
+      
+      <line x1="16" y1="52" x2="234" y2="52" stroke="#334155" stroke-width="1" />
+      
+      <text x="16" y="75" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• 10 Baseline Services</text>
+      <text x="16" y="95" font-family="'Consolas', monospace" font-size="11" fill="#94A3B8">  SysMain, WSearch, DiagTrack</text>
+      <text x="16" y="120" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• Edge &amp; Widget Blocks</text>
+      <text x="16" y="140" font-family="'Consolas', monospace" font-size="11" fill="#94A3B8">  Shopping &amp; Web Search GPO</text>
+      <text x="16" y="165" font-family="'Consolas', monospace" font-size="11" fill="#38BDF8">• Shell Freeze Remediation</text>
+    </g>
+  </g>
+
+  <!-- Bottom Terminal Status Strip -->
+  <g transform="translate(40, 435)">
+    <rect x="0" y="0" width="1120" height="38" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1" />
+    <text x="24" y="24" font-family="'Consolas', monospace" font-size="12" fill="#10B981">
+      ● OPENSSF HARDENED
+    </text>
+    <text x="210" y="24" font-family="'Consolas', monospace" font-size="12" fill="#38BDF8">
+      ● POWERSHELL 7.0+
+    </text>
+    <text x="385" y="24" font-family="'Consolas', monospace" font-size="12" fill="#FCD34D">
+      ● PYTHON STDIO MCP SERVER
+    </text>
+    <text x="630" y="24" font-family="'Consolas', monospace" font-size="12" fill="#A855F7">
+      ● DYNAMIC RULE ASSIMILATION
+    </text>
+    <text x="890" y="24" font-family="'Consolas', monospace" font-size="12" fill="#06B6D4">
+      ● ZERO-LEAK QUARANTINE
+    </text>
+  </g>
+</svg>
